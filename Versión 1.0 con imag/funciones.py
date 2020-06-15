@@ -11,6 +11,8 @@ import re
 
 from selenium.webdriver.common.keys import Keys
 
+import xerox
+
 class EasySend:
     
     def __init__(self, driver):
@@ -18,19 +20,31 @@ class EasySend:
         counter = 0
         self.driver = driver
 
+
+    def mandar_rapido_teclas(self, mensaje):
+        xerox.copy(mensaje)
+
+
    
     
     def buscar_contacto(self, contacto):
         self.driver.find_element_by_xpath('//*[@id="side"]/header/div[2]/div/span/div[2]').click()
         buscar_chat_tag = self.driver.find_element_by_xpath('//*[@id="app"]/div/div/div[2]/div[1]/span/div/span/div/div[1]/div/label/div/div[2]')
-        buscar_chat_tag.send_keys(contacto)
-        time.sleep(1)
+
+
+        #buscar_chat_tag.send_keys(contacto)
+        xerox.copy(contacto)
+        buscar_chat_tag.send_keys(Keys.CONTROL,'v')
+
+
+        time.sleep(0.1)
         buscar_chat_tag.send_keys(Keys.ENTER)
     
     
     def mandar_mensaje(self, mensaje):
         message_box = self.driver.find_element_by_xpath('//*[@id="main"]/footer/div[1]/div[2]/div/div[2]')#Separamos el mensaje si hay un nuevo reglón
 
+        """
         try:
             mensaje = mensaje.split("\n")
         except:
@@ -38,27 +52,56 @@ class EasySend:
 
         print(mensaje)
 
+
         for i in range(len(mensaje)-1):
             message_box.send_keys(mensaje[i])
             message_box.send_keys(Keys.SHIFT, Keys.ENTER)
-
-
-
-        message_box.send_keys(mensaje[-1])
+        """
+        xerox.copy(mensaje)
+        message_box.send_keys(Keys.CONTROL,'v')
         message_box.send_keys(Keys.ENTER)
-        time.sleep(1)
+
         
         
     def mandar_archivo(self, location):
         #To send attachments
         #click to add
-        self.driver.find_element_by_css_selector("span[data-icon='clip']").click()
+
+        #Hay que hacer esto de los while para velocidad
+
+        
+        if len(self.driver.find_elements_by_class_name("_3nEwM")) > 0: #Checkeamos si ha encontrado el contacto
+            raise Exception("No se ha encontrado el contacto") #Si no, raiseamos un error que nos entrará en el try loop del mandar a todo el mundo
+ 
+
+        while True:
+            try:
+                clip = self.driver.find_element_by_css_selector("span[data-icon='clip']")
+                clip.click()
+                break
+                print("Salido del clip")
+            except:
+                pass
         #add file to send by file path
-        self.driver.find_element_by_css_selector("input[type='file']").send_keys(location)
+        while True:
+            try:
+                file = self.driver.find_element_by_css_selector("input[type='file']")
+                file.send_keys(location)
+                break
+                print("Salido del archivo")
+            except Exception as ex:
+                print(ex)
+                pass
         #click to send
-        time.sleep(2)
-        self.driver.find_element_by_xpath('//*[@id="app"]/div/div/div[2]/div[2]/span/div/span/div/div/div[2]/span/div/div').click()
-        time.sleep(1)
+        while True:
+            try:
+                self.driver.find_element_by_xpath('//*[@id="app"]/div/div/div[2]/div[2]/span/div/span/div/div/div[2]/span/div/div').click()
+                break
+            except:
+                pass
+
+        print("Salido de mandar mandar_archivo")
+
         
     
     def esperar_hasta_mandado(self, object):

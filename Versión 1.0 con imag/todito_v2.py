@@ -9,6 +9,7 @@ import threading
 from os import getcwd
 from send_email import send_email
 from math import ceil
+from datetime import datetime
 
 
 from GUI.log_in import log_in
@@ -191,21 +192,27 @@ class Ui_Dialog(object):
         
         nombres_nombre = self.comboBox_nombres.currentText()
         telefono_nombre = self.comboBox_telefonos.currentText()
-        
-        print(telefono_nombre,nombres_nombre)
-        nombres, telefonos = leer_xlsx.ajustar_nombres(nombres_nombre, telefono_nombre, filename)
-        
-        print("\n\n",nombres, telefonos)
 
         
-        hacer_vcard(nombres, telefonos)
-        
-        self.stackedWidget.setCurrentIndex(3)
+        if len(nombres_nombre) != 0 and len(telefono_nombre) != 0:
+
+            nombres, telefonos = leer_xlsx.ajustar_nombres(nombres_nombre, telefono_nombre, filename)
+            
+            print("\n\n",nombres, telefonos)
+
+            
+            hacer_vcard(nombres, telefonos)
+            
+            self.stackedWidget.setCurrentIndex(3)
 
     def is_clicked_confirmar_email(self):
         email = self.lineEdit_entrar_email.text()
         self.stackedWidget.setCurrentIndex(4)
-        filename =  getcwd() + "\\test_11.vcf"
+
+
+        now = datetime.now()
+        nombre_a_poner = str(now.year) + str(now.month) + str(now.day) + "_contactos.vcf"
+        filename =  getcwd() + "\\contacts\\" + nombre_a_poner
 
         _translate = QtCore.QCoreApplication.translate
         self.label_donde_recibido_email.setText(_translate("Dialog", email))
