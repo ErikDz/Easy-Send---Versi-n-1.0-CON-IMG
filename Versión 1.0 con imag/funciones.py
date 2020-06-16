@@ -28,8 +28,8 @@ class EasySend:
    
     
     def buscar_contacto(self, contacto):
-        self.driver.find_element_by_xpath('//*[@id="side"]/header/div[2]/div/span/div[2]').click()
-        buscar_chat_tag = self.driver.find_element_by_xpath('//*[@id="app"]/div/div/div[2]/div[1]/span/div/span/div/div[1]/div/label/div/div[2]')
+        self.driver.find_element_by_xpath('//*[@title="Nuevo chat"]').click()
+        buscar_chat_tag = self.driver.find_element_by_class_name('_3FRCZ.copyable-text.selectable-text')
 
 
         #buscar_chat_tag.send_keys(contacto)
@@ -38,6 +38,11 @@ class EasySend:
 
 
         time.sleep(0.1)
+        try:
+            self.driver.find_element_by_xpath('//div[@id="main"]//*[@title="{0}"]'.format(contacto))
+        except:
+            time.sleep(0.1)
+            
         buscar_chat_tag.send_keys(Keys.ENTER)
     
     
