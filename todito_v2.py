@@ -43,6 +43,8 @@ class Ui_Dialog(object):
 
 
 
+
+
     def setupUi(self, Dialog):
         Dialog.setWindowIcon(QtGui.QIcon(getcwd()+'\\img\\logo.jpg'))
         Dialog.setWindowTitle("EasySend")
@@ -96,7 +98,7 @@ class Ui_Dialog(object):
         self.pushButton_LOGIN.setText(_translate("Dialog", "LOG IN"))
         self.label_2.setText(_translate("Dialog", "Usuario:"))
         self.label.setText(_translate("Dialog", "EasySend™"))
-        self.label_4.setText(_translate("Dialog", "Selecciona el archivo .xlsx o .csv donde figuren los datos \n"
+        self.label_4.setText(_translate("Dialog", "Selecciona el archivo .xlsx donde figuren los datos \n"
 "de las personas destinatarias de su mensaje.  "))
         self.pushButton_ConfirmarContinuar_buscar_archivo.setText(_translate("Dialog", "Confirmar y continuar"))
         #self.label_que_has_seleccionado.setText(_translate("Dialog", "Has seleccionado:"))
@@ -387,7 +389,6 @@ class Ui_Dialog(object):
         driver.get("https://web.whatsapp.com/")
         
         EasySend = EasySend(driver)
-        time.sleep(6)
     
         #Aqui, buscamos constantemente el código QR. Si está, significa q no se ha logueado
         while True:
@@ -559,14 +560,16 @@ class Ui_Dialog(object):
 
         driver.set_window_size(480,200)
 
-
+        EasySend.signal_update_progress.connect(self.update_progress)
         z = threading.Thread(daemon=True, target=EasySend.mandar_a_todo_el_mundo, args=(telefonos, mensaje_entero, self))
         z.start()
         self.stackedWidget.setCurrentIndex(8)
 
 
-    
-
+    def update_progress(self, counter, len_tele):
+        self.progressBar.setProperty("value", counter)
+        _translate = QtCore.QCoreApplication.translate
+        self.label_23.setText(_translate("Dialog", "Enviado a {0} de {1} contactos...").format(counter, len_tele))
 
 
 
